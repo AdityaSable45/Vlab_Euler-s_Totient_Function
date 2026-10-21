@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Euler's Totient Function — Virtual Lab</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="lab-header">
+  <div class="header-inner">
+    <a class="back-link" href="../../index.html" aria-label="Back to lab home">&larr;</a>
+    <div class="header-title">
+      <span class="eyebrow">Cryptography Virtual Lab</span>
+      <h1>Euler's Totient Function</h1>
+    </div>
+  </div>
+</header>
+
+<div class="lab-body">
+<nav class="tabs" aria-label="Experiment sections">
+  <button class="tab-btn active" data-target="aim">Aim</button>
+  <button class="tab-btn" data-target="theory">Theory</button>
+  <button class="tab-btn" data-target="procedure">Procedure</button>
+  <button class="tab-btn" data-target="simulate">Simulation</button>
+  <button class="tab-btn" data-target="quiz">Quiz</button>
+  <button class="tab-btn" data-target="references">References</button>
+</nav>
+
+<main class="content">
+
+  <section id="aim" class="panel active">
+    <h2>Aim &amp; Objectives</h2>
+    <p>Aim: To implement Euler's Totient function φ(n)</p>
+    <p>Objectives:</p>
+    <ul class="objectives">
+      <li>To evaluate it for various values of n.</li>
+      <li>Understand what φ(n) counts and why it matters in cryptography.</li>
+      <li>Compute φ(n) directly, by counting coprimes, and verify it against the product formula.</li>
+      <li>Observe how φ(n) behaves for primes, prime powers, and composite numbers.</li>
+      <li>Connect φ(n) to RSA key generation, where it determines the size of the usable exponent space.</li>
+    </ul>
+  </section>
+
+  <section id="theory" class="panel">
+    <h2>Theoretical Concepts</h2>
+
+    <h3>Definition</h3>
+    <p>Euler's totient function φ(n), for a positive integer n, counts how many integers in the range
+    1 to n are <strong>coprime</strong> to n — that is, share no common factor with n other than 1.</p>
+    <div class="formula-box">φ(n) = |{ k : 1 ≤ k ≤ n, gcd(k, n) = 1 }|</div>
+
+    <h3>Product formula</h3>
+    <p>If the prime factorisation of n is n = p₁<sup>a₁</sup> · p₂<sup>a₂</sup> ··· p<sub>r</sub><sup>a₁</sup>,
+    φ(n) can be computed without listing every coprime:</p>
+    <div class="formula-box">φ(n) = n · ∏ (1 − 1/p<sub>i</sub>) for each distinct prime p<sub>i</sub> dividing n</div>
+
+    <h3>Key properties</h3>
+    <table class="props-table">
+      <thead><tr><th>Case</th><th>Result</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>n = 1</td><td>φ(1) = 1</td><td>By convention.</td></tr>
+        <tr><td>n = p (prime)</td><td>φ(p) = p − 1</td><td>Every integer below a prime is coprime to it.</td></tr>
+        <tr><td>n = p<sup>k</sup></td><td>φ(p<sup>k</sup>) = p<sup>k</sup> − p<sup>k−1</sup></td><td>Only multiples of p are excluded.</td></tr>
+        <tr><td>n = a · b, gcd(a,b) = 1</td><td>φ(n) = φ(a) · φ(b)</td><td>φ is multiplicative over coprime factors.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Applications in Cryptography:</h3>
+    <p>In RSA, once two primes p and q are chosen and n = p·q, the totient φ(n) = (p−1)(q−1) gives
+    the size of the group used for key generation. The public exponent e is chosen coprime to φ(n),
+    and the private exponent d is e's modular inverse mod φ(n). A weak or predictable φ(n) directly
+    weakens the keypair, which is why n must be the product of two large, well-chosen primes.</p>
+  </section>
+
+  <section id="procedure" class="panel">
+    <h2>Step-by-Step Procedure</h2>
+    <ol class="procedure-list">
+      <li><strong>Pick a value of n.</strong> Enter any positive integer in the simulation panel — there's no upper
+      limit, though very large n will skip the brute-force listing for performance (see note below).</li>
+      <li><strong>Factorise n.</strong> The lab reduces n to its prime factors and their powers.</li>
+      <li><strong>Apply the product formula.</strong> Watch each factor (1 − 1/p) get multiplied in, step by step.</li>
+      <li><strong>Cross-check by brute force.</strong> The lab also lists every k from 1 to n with gcd(k, n) = 1,
+      so you can confirm the count matches the formula's result.</li>
+      <li><strong>Repeat for a prime, a prime power, and a composite n</strong> to see how the three cases from the
+      theory section play out numerically.</li>
+      <li><strong>Attempt the quiz</strong> to confirm your understanding before submission.</li>
+    </ol>
+
+    <div class="video-card">
+      <div class="video-card-header">
+        <span class="video-icon" aria-hidden="true">▶</span>
+        <div>
+          <span class="video-eyebrow">Reference video</span>
+          <h3>Watch before you start</h3>
+        </div>
+      </div>
+      <div class="video-embed">
+        <iframe
+          src="https://www.youtube.com/embed/DwQ7-k9LkJ4"
+          title="Euler's Totient Function — reference video"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      </div>
+      <p class="video-caption">A short walkthrough to watch alongside the procedure above — pause it and try
+      each step in the Simulation tab as you go.</p>
+    </div>
+  </section>
+
+  <section id="simulate" class="panel">
+    <h2>Interactive Simulation</h2>
+    <p class="panel-intro">Enter a value of n and evaluate φ(n) step by step.</p>
+
+    <div class="sim-controls">
+      <label for="nInput">n (any positive integer)</label>
+      <input type="number" id="nInput" min="1" value="36">
+      <button id="computeBtn" class="primary-btn">Evaluate φ(n)</button>
+      <div class="preset-row">
+        <span>Try:</span>
+        <button class="preset-btn" data-n="13">13 (prime)</button>
+        <button class="preset-btn" data-n="27">27 (prime power)</button>
+        <button class="preset-btn" data-n="36">36 (composite)</button>
+        <button class="preset-btn" data-n="100">100</button>
+      </div>
+    </div>
+
+    <div id="simError" class="sim-error" hidden></div>
+
+    <div id="simResults" class="sim-results" hidden>
+      <div class="result-card">
+        <span class="result-label">φ(n)</span>
+        <span class="result-value" id="resultPhi">—</span>
+      </div>
+
+      <div class="result-block">
+        <h3>Prime factorisation</h3>
+        <p id="resultFactorisation" class="mono"></p>
+      </div>
+
+      <div class="result-block">
+        <h3>Formula walkthrough</h3>
+        <p id="resultFormula" class="mono"></p>
+      </div>
+
+      <div class="result-block">
+        <h3>Coprimes of n (brute-force check)</h3>
+        <p id="resultCoprimeCount"></p>
+        <div id="resultCoprimeList" class="coprime-list mono"></div>
+      </div>
+
+      <div class="result-block">
+        <h3>Verification</h3>
+        <p id="resultVerify"></p>
+      </div>
+
+      <div class="result-block">
+        <h3>Euclidean gcd check <span id="gcdCheckLabel" class="mini-label"></span></h3>
+        <p id="gridSkippedNote" class="hint-text" hidden></p>
+        <div id="coprimeGrid" class="coprime-grid"></div>
+        <div class="legend">
+          <span><i class="swatch swatch-green"></i> coprime</span>
+          <span><i class="swatch swatch-red"></i> not coprime</span>
+          <span><i class="swatch swatch-selected"></i> selected</span>
+        </div>
+      </div>
+
+      <div class="result-block">
+        <p class="hint-text" id="gcdHint">Click a number in the grid above to animate its gcd check against n.</p>
+        <div id="gcdSteps" class="gcd-steps"></div>
+        <p id="gcdConclusion" class="gcd-conclusion"></p>
+      </div>
+
+      <div class="result-block">
+        <h3>φ(m) trend chart</h3>
+        <p class="hint-text">Bar height is φ(m). The bar for the current n (if within range) is highlighted.
+        Notice how prime m always reach the diagonal (φ(m) = m − 1), while composite m sit below it.</p>
+        <div class="sim-controls">
+          <label for="trendMaxInput">show m = 1 to</label>
+          <input type="number" id="trendMaxInput" min="2" value="60">
+          <button id="trendUpdateBtn" class="secondary-btn" type="button">Update chart</button>
+        </div>
+        <p id="trendCapNote" class="hint-text" hidden></p>
+        <div id="trendChart" class="trend-chart"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="quiz" class="panel">
+    <h2>Assessment / Quiz</h2>
+    <p class="panel-intro">Five random questions — a mix of concepts and direct φ(n) evaluations. A new set is
+    drawn every time you open this tab.</p>
+    <form id="quizForm"></form>
+    <div class="quiz-actions">
+      <button id="submitQuiz" class="primary-btn">Submit Quiz</button>
+      <button id="newQuizBtn" class="secondary-btn" type="button">New Questions</button>
+    </div>
+    <div id="quizScore" class="quiz-score" hidden></div>
+  </section>
+
+  <section id="references" class="panel">
+    <h2>References</h2>
+    <ul class="ref-list">
+      <li>Stallings, W. <em>Cryptography and Network Security: Principles and Practice.</em> Pearson.</li>
+      <li>Kaufman, C., Perlman, R., Speciner, M. <em>Network Security: Private Communication in a Public World.</em> Prentice Hall.</li>
+      <li>Rosen, K.H. <em>Elementary Number Theory and Its Applications.</em> Pearson — chapter on Euler's theorem and the totient function.</li>
+      <li>NIST FIPS documentation on RSA key generation parameters.</li>
+    </ul>
+  </section>
+
+</main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
